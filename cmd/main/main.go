@@ -79,7 +79,16 @@ func main() {
 	fmt.Print("Converting spectogram to audio...")
 
 	// Convert the carved image back to audio
-	audioData, err := wavecarve.CreateAudioFromSpectrogram(carvedImage, fftSize)
+	//audioData, err := wavecarve.CreateAudioFromSpectrogram(carvedImage, fftSize)
+	//if err != nil {
+	//fmt.Fprintf(os.Stderr, "%v\n", err)
+	//os.Exit(1)
+	//}
+
+	fmt.Println("ok")
+	fmt.Print("Writing output.wav...")
+
+	err = wavecarve.ConvertSpectrogramToAudio("carved.png", "output.wav", fftSize)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(1)
@@ -92,15 +101,12 @@ func main() {
 	//Precision:   2, // 16-bit precision
 	//}
 
-	fmt.Println("ok")
-	fmt.Print("Writing output.wav...")
-
 	// Write the audio to a .wav file
-	err = wavecarve.WriteWavFile("output.wav", audioData, int(format.SampleRate))
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", err)
-		os.Exit(1)
-	}
+	//err = wavecarve.WriteWavFile("output.wav", audioData, int(format.SampleRate))
+	//if err != nil {
+	//fmt.Fprintf(os.Stderr, "%v\n", err)
+	//os.Exit(1)
+	//}
 
 	fmt.Println("ok")
 

@@ -5,6 +5,7 @@ import (
 	"image"
 	"image/color"
 	"image/draw"
+	"image/png"
 	"math"
 	"math/cmplx"
 	"os"
@@ -109,13 +110,39 @@ func CarveSeams(img *image.RGBA, newWidthInPercentage float64) (*image.RGBA, err
 	return resizedRGBA, nil
 }
 
-// Function to convert a spectrogram back to audio samples
-func CreateAudioFromSpectrogram(img *image.RGBA, fftSize int) ([]int16, error) {
+// Function to read a spectrogram PNG file
+func ReadSpectrogramPNG(filePath string) (*image.RGBA, error) {
+	// Open the PNG file
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open file: %w", err)
+	}
+	defer file.Close()
+
+	// Decode the PNG image
+	img, err := png.Decode(file)
+	if err != nil {
+		return nil, fmt.Errorf("failed to decode PNG image: %w", err)
+	}
+
+	// Convert the image to RGBA format if necessary
+	rgba, ok := img.(*image.RGBA)
+	if !ok {
+		bounds := img.Bounds()
+		rgba = image.NewRGBA(bounds)
+		draw.Draw(rgba, bounds, img, bounds.Min, draw.Src)
+	}
+
+	return rgba, nil
+}
+
+// Function to convert a spectrogram image back to audio
+func CreateAudioFromSpectrogram(img *image.RGBA, fftSize int) beep.Streamer {
 	// Compute the number of FFT frames
 	numFrames := img.Bounds().Dx()
 
-	// Create a buffer for audio samples
-	samples := make([]int16, numFrames*fftSize)
+	// Initialize the audio data slice
+	data := make([][2]float64, numFrames*fftSize)
 
 	// Iterate over the pixels in the image
 	for i := 0; i < numFrames; i++ {
@@ -136,47 +163,58 @@ func CreateAudioFromSpectrogram(img *image.RGBA, fftSize int) ([]int16, error) {
 		// Compute the inverse FFT of the frame
 		floatFrame := fft.IFFT(fftFrame)
 
-		// Convert float samples to int16
+		// Store the real parts of the FFT frame in the audio data
 		for j, val := range floatFrame {
-			sample := int16(real(val) * math.MaxInt16)
-			samples[i*fftSize+j] = sample
+			data[i*fftSize+j] = [2]float64{real(val), real(val)}
 		}
 	}
 
-	return samples, nil
+	// Create and return a Streamer for the audio data
+	return beep.StreamerFunc(func(samples [][2]float64) (n int, ok bool) {
+		n = copy(samples, data)
+		return n, n > 0
+	})
 }
 
-// Function to write audio data to a .wav file
-func WriteWavFile(filePath string, samples []int16, sampleRate int) error {
-	// Create the .wav file
+// Function to write a beep.Streamer to a WAV file
+func WriteWavFile(filePath string, streamer beep.Streamer, format beep.Format) error {
+	// Create the WAV file
 	file, err := os.Create(filePath)
 	if err != nil {
 		return fmt.Errorf("failed to create file: %w", err)
 	}
 	defer file.Close()
 
-	// Create a beep.Streamer from the samples
-	streamer := beep.StreamerFunc(func(samples [][2]float64) (n int, ok bool) {
-		for i := range samples {
-			sample := float64(samples[i][0])
-			sampleInt := int16(sample)
-			samples[i][0] = float64(sampleInt)
-			samples[i][1] = float64(sampleInt)
-		}
-		return len(samples), true
-	})
+	// Write the Streamer to the file
+	err = wav.Encode(file, streamer, format)
+	if err != nil {
+		return fmt.Errorf("failed to encode WAV file: %w", err)
+	}
+
+	return nil
+}
+
+func ConvertSpectrogramToAudio(spectrogramFile string, outputWavFile string, fftSize int) error {
+	// Read the spectrogram PNG file
+	img, err := ReadSpectrogramPNG(spectrogramFile)
+	if err != nil {
+		return fmt.Errorf("failed to read spectrogram: %w", err)
+	}
+
+	// Convert the spectrogram image back to audio
+	audioStreamer := CreateAudioFromSpectrogram(img, fftSize)
 
 	// Define the audio format
 	format := beep.Format{
-		SampleRate:  beep.SampleRate(sampleRate),
-		NumChannels: 1,
-		Precision:   2,
+		SampleRate:  beep.SampleRate(44100),
+		NumChannels: 2, // assuming stereo audio, adjust as necessary
+		Precision:   2, // 16-bit precision
 	}
 
-	// Write the audio data to the .wav file
-	err = wav.Encode(file, beep.Seq(streamer), format)
+	// Write the audio to a WAV file
+	err = WriteWavFile(outputWavFile, audioStreamer, format)
 	if err != nil {
-		return fmt.Errorf("failed to encode wav file: %w", err)
+		return fmt.Errorf("failed to write WAV file: %w", err)
 	}
 
 	return nil
