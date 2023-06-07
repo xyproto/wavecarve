@@ -109,13 +109,13 @@ func CarveSeams(img *image.RGBA, newWidthInPercentage float64) (*image.RGBA, err
 	return resizedRGBA, nil
 }
 
-// Function to convert a spectrogram back to a *beep.Streamer
-func CreateAudioFromSpectrogram(img *image.RGBA, fftSize int) beep.Streamer {
+// Function to convert a spectrogram back to audio samples
+func CreateAudioFromSpectrogram(img *image.RGBA, fftSize int) ([]int16, error) {
 	// Compute the number of FFT frames
 	numFrames := img.Bounds().Dx()
 
-	// Initialize the audio data slice
-	data := make([][2]float64, numFrames*fftSize)
+	// Create a buffer for audio samples
+	samples := make([]int16, numFrames*fftSize)
 
 	// Iterate over the pixels in the image
 	for i := 0; i < numFrames; i++ {
@@ -136,21 +136,18 @@ func CreateAudioFromSpectrogram(img *image.RGBA, fftSize int) beep.Streamer {
 		// Compute the inverse FFT of the frame
 		floatFrame := fft.IFFT(fftFrame)
 
-		// Store the real parts of the FFT frame in the audio data
+		// Convert float samples to int16
 		for j, val := range floatFrame {
-			data[i*fftSize+j] = [2]float64{real(val), real(val)}
+			sample := int16(real(val) * math.MaxInt16)
+			samples[i*fftSize+j] = sample
 		}
 	}
 
-	// Create and return a Streamer for the audio data
-	return beep.StreamerFunc(func(samples [][2]float64) (n int, ok bool) {
-		n = copy(samples, data)
-		return n, n > 0
-	})
+	return samples, nil
 }
 
-// Function to write a beep.Streamer to a .wav file
-func WriteWavFile(filePath string, streamer beep.Streamer, format beep.Format) error {
+// Function to write audio data to a .wav file
+func WriteWavFile(filePath string, samples []int16, sampleRate int) error {
 	// Create the .wav file
 	file, err := os.Create(filePath)
 	if err != nil {
@@ -158,8 +155,26 @@ func WriteWavFile(filePath string, streamer beep.Streamer, format beep.Format) e
 	}
 	defer file.Close()
 
-	// Write the Streamer to the file
-	err = wav.Encode(file, streamer, format)
+	// Create a beep.Streamer from the samples
+	streamer := beep.StreamerFunc(func(samples [][2]float64) (n int, ok bool) {
+		for i := range samples {
+			sample := float64(samples[i][0])
+			sampleInt := int16(sample)
+			samples[i][0] = float64(sampleInt)
+			samples[i][1] = float64(sampleInt)
+		}
+		return len(samples), true
+	})
+
+	// Define the audio format
+	format := beep.Format{
+		SampleRate:  beep.SampleRate(sampleRate),
+		NumChannels: 1,
+		Precision:   2,
+	}
+
+	// Write the audio data to the .wav file
+	err = wav.Encode(file, beep.Seq(streamer), format)
 	if err != nil {
 		return fmt.Errorf("failed to encode wav file: %w", err)
 	}
