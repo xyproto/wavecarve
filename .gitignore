@@ -1,0 +1,3 @@
+cmd/main/main
+cmd/main/*.png
+cmd/main/output.wav
