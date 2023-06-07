@@ -79,7 +79,11 @@ func main() {
 	fmt.Print("Converting spectogram to audio...")
 
 	// Convert the carved image back to audio
-	audioStreamer := wavecarve.CreateAudioFromSpectrogram(carvedImage, fftSize)
+	audioData, err := wavecarve.CreateAudioFromSpectrogram(carvedImage, fftSize)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%v\n", err)
+		os.Exit(1)
+	}
 
 	// Define the audio format
 	//format = beep.Format{
@@ -92,7 +96,7 @@ func main() {
 	fmt.Print("Writing output.wav...")
 
 	// Write the audio to a .wav file
-	err = wavecarve.WriteWavFile("output.wav", audioStreamer, format)
+	err = wavecarve.WriteWavFile("output.wav", audioData, int(format.SampleRate))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(1)
