@@ -2,7 +2,7 @@
 
 Seam carving, but for audio.
 
-This is a work in progress!
+# This is a work in progress!
 
 ![spectrogram](img/spectrogram.png)
 
