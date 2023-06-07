@@ -15,3 +15,7 @@ After carving:
 ## The next step is to be able to convert the spectrogram back into audio and check what it sounds like.
 
 Build with `go build -mod=vendor`.
+
+gpt4 was used as an assistant for this project.
+
+Currently, cmd/main/main appears to hang when writing output.wav, but it might just be a really slow process.
