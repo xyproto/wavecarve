@@ -55,7 +55,7 @@ gioui.org/shader/piet
 # github.com/disintegration/imaging v1.6.2
 ## explicit
 github.com/disintegration/imaging
-# github.com/esimov/caire v1.4.6
+# github.com/esimov/caire v1.4.7-0.20230331122901-fc01f8e08e9e
 ## explicit; go 1.18
 github.com/esimov/caire
 github.com/esimov/caire/imop

@@ -5,7 +5,6 @@ import (
 	"image/png"
 	"os"
 
-	"github.com/faiface/beep"
 	"github.com/xyproto/wavecarve"
 )
 
@@ -90,7 +89,7 @@ func main() {
 	//}
 
 	fmt.Println("ok")
-	fmt.Print("Writeing output.wav...")
+	fmt.Print("Writing output.wav...")
 
 	// Write the audio to a .wav file
 	err = wavecarve.WriteWavFile("output.wav", audioStreamer, format)

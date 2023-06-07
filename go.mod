@@ -3,7 +3,7 @@ module github.com/xyproto/wavecarve
 go 1.20
 
 require (
-	github.com/esimov/caire v1.4.6
+	github.com/esimov/caire v1.4.7-0.20230331122901-fc01f8e08e9e
 	github.com/faiface/beep v1.1.0
 	github.com/mjibson/go-dsp v0.0.0-20180508042940-11479a337f12
 )
