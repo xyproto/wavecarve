@@ -48,31 +48,4 @@ func main() {
 	}
 
 	fmt.Println("ok")
-	fmt.Print("Carving the spectrogram...")
-
-	carvedImage, err := wavecarve.CarveSeams(spectrogram, 50.0) // Reduce the width of the spectrogram by 50%
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Could not carve seams: %s\n", err)
-		os.Exit(1)
-	}
-
-	fmt.Println("ok")
-	fmt.Print("Writing carved.png...")
-
-	// Create the output file
-	carvedImageFile, err := os.Create("carved.png")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", err)
-		os.Exit(1)
-	}
-	defer carvedImageFile.Close()
-
-	// Encode the image to the output file
-	err = png.Encode(carvedImageFile, carvedImage)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", err)
-		os.Exit(1)
-	}
-
-	fmt.Println("ok")
 }
