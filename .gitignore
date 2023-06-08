@@ -1,3 +1,4 @@
-cmd/main/main
-cmd/main/*.png
-cmd/main/output.wav
+cmd/breakwav/*.png
+cmd/breakwav/output.wav
+cmd/breakwav/breakwav
+cmd/spectrogram/spectrogram
