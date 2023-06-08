@@ -12,10 +12,17 @@ Before carving
 
 ![spectrogram](img/spectrogram.png)
 
+Before carving, including phase
+
+![spectrogram](img/spectrogram2.png)
+
 After carving
 
 ![carved](img/carved.png)
 
+After carving, including phase
+
+![carved](img/carved2.png)
 
 Build with `go build -mod=vendor`.
 
