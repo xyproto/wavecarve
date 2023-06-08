@@ -1,4 +1,4 @@
-# gioui.org v0.0.0-20230526230622-e3ef98dda382
+# gioui.org v0.0.0-20230607224114-c6e4eecf21c3
 ## explicit; go 1.18
 gioui.org/app
 gioui.org/app/internal/log
@@ -63,10 +63,6 @@ github.com/esimov/caire/utils
 # github.com/esimov/pigo v1.4.6
 ## explicit; go 1.13
 github.com/esimov/pigo/core
-# github.com/faiface/beep v1.1.0
-## explicit; go 1.14
-github.com/faiface/beep
-github.com/faiface/beep/wav
 # github.com/go-text/typesetting v0.0.0-20230606200221-26abc51a6c27
 ## explicit; go 1.17
 github.com/go-text/typesetting/di
@@ -87,9 +83,7 @@ github.com/go-text/typesetting/unicodedata
 ## explicit
 github.com/mjibson/go-dsp/dsputils
 github.com/mjibson/go-dsp/fft
-# github.com/pkg/errors v0.9.1
-## explicit
-github.com/pkg/errors
+github.com/mjibson/go-dsp/window
 # golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1
 ## explicit; go 1.20
 golang.org/x/exp/constraints

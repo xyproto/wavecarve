@@ -57,6 +57,8 @@ type Editor struct {
 	// Filter is the list of characters allowed in the Editor. If Filter is empty,
 	// all characters are allowed.
 	Filter string
+	// WrapPolicy configures how displayed text will be broken into lines.
+	WrapPolicy text.WrapPolicy
 
 	buffer *editBuffer
 	// scratch is a byte buffer that is reused to efficiently read portions of text
@@ -504,6 +506,7 @@ func (e *Editor) initBuffer() {
 	e.text.Alignment = e.Alignment
 	e.text.SingleLine = e.SingleLine
 	e.text.Mask = e.Mask
+	e.text.WrapPolicy = e.WrapPolicy
 }
 
 // Layout lays out the editor using the provided textMaterial as the paint material
@@ -739,10 +742,11 @@ func (e *Editor) CaretCoords() f32.Point {
 	return e.text.CaretCoords()
 }
 
-// Delete runes from the caret position. The sign of runes specifies the
+// Delete runes from the caret position. The sign of the argument specifies the
 // direction to delete: positive is forward, negative is backward.
 //
-// If there is a selection, it is deleted and counts as a single rune.
+// If there is a selection, it is deleted and counts as a single grapheme
+// cluster.
 func (e *Editor) Delete(graphemeClusters int) {
 	e.initBuffer()
 	if graphemeClusters == 0 {
