@@ -1,19 +1,14 @@
 package wavecarve
 
 import (
-	"fmt"
 	"image"
 	"image/color"
-	"image/draw"
-	"image/png"
 	"math"
 	"math/cmplx"
-	"os"
 
 	"github.com/mjibson/go-dsp/fft"
 )
 
-// Function to create a spectrogram from an []int16
 func CreateSpectrogramFromAudio(int16s []int16) (*image.RGBA, error) {
 	// Convert the int16s to float64s
 	float64s := int16sToFloat64s(int16s)
@@ -31,8 +26,9 @@ func CreateSpectrogramFromAudio(int16s []int16) (*image.RGBA, error) {
 
 		// Set the pixels in the image
 		for j, val := range fftFrame {
-			// Compute the magnitude of the FFT value (log scale)
+			// Compute the magnitude and phase of the FFT value (log scale for magnitude)
 			mag := 20 * math.Log10(cmplx.Abs(val))
+			phase := cmplx.Phase(val)
 
 			// Normalize the magnitude to the range of 0-255
 			mag = (mag + 140) * 255 / 140
@@ -44,36 +40,53 @@ func CreateSpectrogramFromAudio(int16s []int16) (*image.RGBA, error) {
 				mag = 255
 			}
 
+			// Normalize the phase to the range of 0-255
+			phase = (phase + math.Pi) * 255 / (2 * math.Pi)
+
 			// Set the pixel in the image
-			img.Set(i, j, color.RGBA{uint8(mag), uint8(mag), uint8(mag), 255})
+			img.Set(i, j, color.RGBA{uint8(mag), uint8(phase), 0, 255})
 		}
 	}
 
 	return img, nil
 }
 
-// Function to read a spectrogram PNG file
-func ReadSpectrogramPNG(filePath string) (*image.RGBA, error) {
-	// Open the PNG file
-	file, err := os.Open(filePath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to open file: %w", err)
-	}
-	defer file.Close()
+func CreateAudioFromSpectrogram(img *image.RGBA) ([]int16, error) {
+	// Get the image bounds
+	bounds := img.Bounds()
 
-	// Decode the PNG image
-	img, err := png.Decode(file)
-	if err != nil {
-		return nil, fmt.Errorf("failed to decode PNG image: %w", err)
+	// Create a slice to hold the audio data
+	audioData := make([]int16, bounds.Dx()*FFTSize)
+
+	// Iterate over the image pixels
+	for i := 0; i < bounds.Dx(); i++ {
+		// Create a slice to hold the FFT frame
+		fftFrame := make([]complex128, bounds.Dy())
+
+		// Get the FFT frame from the image
+		for j := 0; j < bounds.Dy(); j++ {
+			// Get the pixel color
+			r, g, _, _ := img.At(i, j).RGBA()
+
+			// Compute the magnitude and phase from the pixel color
+			mag := (float64(r) * 140 / 255) - 140
+			phase := (float64(g) * 2 * math.Pi / 255) - math.Pi
+
+			// Convert the magnitude from dB to linear
+			mag = math.Pow(10, mag/20)
+
+			// Create the complex FFT value
+			fftFrame[j] = cmplx.Rect(mag, phase)
+		}
+
+		// Compute the inverse FFT of the frame
+		frame := fft.IFFT(fftFrame)
+
+		// Convert the complex values to float64s and then to int16s
+		for j, val := range frame {
+			audioData[i*FFTSize+j] = int16(real(val) * 32767)
+		}
 	}
 
-	// Convert the image to RGBA format if necessary
-	rgba, ok := img.(*image.RGBA)
-	if !ok {
-		bounds := img.Bounds()
-		rgba = image.NewRGBA(bounds)
-		draw.Draw(rgba, bounds, img, bounds.Min, draw.Src)
-	}
-
-	return rgba, nil
+	return audioData, nil
 }
