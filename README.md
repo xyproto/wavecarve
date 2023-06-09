@@ -8,7 +8,7 @@ What if audio could be converted to an image, and then seam carving could be use
 
 ### Process
 
-With some string, glue, some experience with the Go programming language and some output from GPT4, I created the `wavecarve` package for Go. This package provides these functions:
+With some string, glue, experience with Go and some output from GPT4, I created the `wavecarve` package for Go. This package provides these functions:
 
 * A function for reading a `.wav` file: `ReadWavFile(filePath string) ([]int16, WAVHeader, error)`
 * A function for creating and writing to a `.wav` file: `WriteWavFile(filePath string, int16s []int16, header WAVHeader)`
