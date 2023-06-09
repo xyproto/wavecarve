@@ -1,4 +1,4 @@
-cmd/breakwav/*.png
-cmd/breakwav/output.wav
-cmd/breakwav/breakwav
+.DS_Store
+cmd/carve/carve
+cmd/recreate/recreate
 cmd/spectrogram/spectrogram
