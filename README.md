@@ -1,5 +1,7 @@
 # wavecarve
 
+![wave](https://upload.wikimedia.org/wikipedia/commons/5/55/Large_breaking_wave.jpg)
+
 ### Here's the idea
 
 What if audio could be converted to an image, and then seam carving could be used on the image, and then the image could be converted back to audio. Would it sound interesting? Would it be useful somehow as a sound design tool?
