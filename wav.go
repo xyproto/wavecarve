@@ -62,6 +62,24 @@ func int16sToBytes(int16s []int16) []byte {
 	return bytes
 }
 
+// Convert a slice of int16s to a slice of float64s
+func int16sToFloat64s(int16s []int16) []float64 {
+	float64s := make([]float64, len(int16s))
+	for i, int16 := range int16s {
+		float64s[i] = float64(int16) / math.MaxInt16
+	}
+	return float64s
+}
+
+// Convert a slice of float64s to a slice of int16s
+func float64sToInt16s(float64s []float64) []int16 {
+	int16s := make([]int16, len(float64s))
+	for i, float64 := range float64s {
+		int16s[i] = int16(float64 * math.MaxInt16)
+	}
+	return int16s
+}
+
 // Read a .wav file
 func ReadWavFile(filePath string) ([]int16, WAVHeader, error) {
 	// Open the .wav file
@@ -98,13 +116,17 @@ func WriteWavFile(filePath string, int16s []int16, header WAVHeader) error {
 	}
 	defer file.Close()
 
+	// Convert the int16s to bytes
+	bytes := int16sToBytes(int16s)
+
+	// Update the ChunkSize and Subchunk2Size in the header
+	header.ChunkSize = 36 + uint32(len(bytes)) // 4 (ChunkID) + (8 + Subchunk1Size) + (8 + Subchunk2Size)
+	header.Subchunk2Size = uint32(len(bytes))
+
 	// Write the header
 	if err := binary.Write(file, binary.LittleEndian, &header); err != nil {
 		return err
 	}
-
-	// Convert the int16s to bytes
-	bytes := int16sToBytes(int16s)
 
 	// Write the audio data
 	if _, err := file.Write(bytes); err != nil {
@@ -112,22 +134,4 @@ func WriteWavFile(filePath string, int16s []int16, header WAVHeader) error {
 	}
 
 	return nil
-}
-
-// Convert a slice of int16s to a slice of float64s
-func int16sToFloat64s(int16s []int16) []float64 {
-	float64s := make([]float64, len(int16s))
-	for i, int16 := range int16s {
-		float64s[i] = float64(int16) / math.MaxInt16
-	}
-	return float64s
-}
-
-// Convert a slice of float64s to a slice of int16s
-func float64sToInt16s(float64s []float64) []int16 {
-	int16s := make([]int16, len(float64s))
-	for i, float64 := range float64s {
-		int16s[i] = int16(float64 * math.MaxInt16)
-	}
-	return int16s
 }
