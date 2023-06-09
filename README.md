@@ -53,6 +53,6 @@ Even though the audio is of low quality, one can get a hint of which effect seam
 * A spectrogram + phase information is not a great representation of audio, since converting audio to this format and back is a very lossy process.
 * Seam carving does not produce a particularly interesting effect on the audio, using these types of spectrograms.
 * There might be other visual representations of audio that gives much better results, though.
-* It's not a great sound design tool.
+* It's not a great sound design tool, unless a lot of filters are applied afterwards, perhaps.
 
 Thanks for reading.
