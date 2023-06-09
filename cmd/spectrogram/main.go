@@ -9,9 +9,9 @@ import (
 )
 
 func main() {
-	fmt.Print("Reading example.wav...")
+	fmt.Print("Reading input.wav...")
 
-	audioInts, _, err := wavecarve.ReadWavFile("example.wav")
+	audioInts, _, err := wavecarve.ReadWavFile("input.wav")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(1)
