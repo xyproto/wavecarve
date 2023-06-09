@@ -24,7 +24,7 @@ Note that the `.wav` files are unesessaryly large with a little bit of audio at 
 
 ### Results
 
-Here is the example audio I used:
+Here is the example audio I used as an input file:
 
 https://github.com/xyproto/wavecarve/raw/main/wav/example.wav
 
@@ -36,17 +36,15 @@ Here is a seam carved version of the spectrogram, reduced to 50% of the width:
 
 ![carved](img/carved3.png)
 
-And here is the re-created audio from example.wav, created with `cmd/recreate` and then converted to `.mp3`:
+And here is the re-created audio from `example.wav`, created with `cmd/recreate` and then converted to `.mp3`. The audio has lost quite a bit of quality in the process and is not particularly pleasing to listen to:
 
 https://github.com/xyproto/wavecarve/raw/main/mp3/output.mp3
 
-The audio has lost quite a bit of quality in the process of being converted to an spectrogram and back.
-
-And if the carved image is used to re-create audio instead, this is the result:
+If the carved image is used to re-create audio instead, this is the result:
 
 https://github.com/xyproto/wavecarve/raw/main/mp3/carved.mp3
 
-Even though the audio is of low quality, one can get a hint of which effect seam carving has on audio, and it's not particularly pleasing.
+Even though the audio is of low quality, one can get a hint of which effect seam carving has on audio. It's not particularly pleasing.
 
 ### Conclusions
 
