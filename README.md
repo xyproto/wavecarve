@@ -20,9 +20,9 @@ These functions are used by the utilities that are included in the `cmd` directo
 
 * `cmd/spectrogram` - a utility that reads `input.wav`, creates a visual representation of the audio (a spectrogram with phase information) and outputs the image to `spectrogram.png`.
 * `cmd/recreate` - a utility that reads `input.wav`, creates a visual representation of the audio, uses this representation to try to re-create the audio (a lossy process), and outputs `output.wav`.
-* `cmd/carve` - a utility that reads `input.wav`, creates a visual representation, seams carves the image to reduce the least interesting parts, writes this image to `carved.png` and then creates audio from the image and outputs `output.wav`.
+* `cmd/carve` - a utility that reads `input.wav`, creates a visual representation, seams carves the image to remove the least interesting parts, writes this image to `carved.png` and then creates audio from the image and outputs `output.wav`.
 
-Note that the `.wav` files are unesessaryly large with a little bit of audio at the start and a lot of silence at the end and needs to be trimmed down manually after having being generated. This might be fixed in a future version.
+Note that the generated `.wav` files are unesessarily large with a little bit of audio at the start and a lot of silence at the end and needs to be trimmed down manually after having being generated. This might be fixed in a future version.
 
 ### Results
 
