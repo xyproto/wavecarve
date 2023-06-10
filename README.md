@@ -13,7 +13,7 @@ With some string, glue, experience with Go and some output from GPT4, I created 
 * A function for reading a `.wav` file: `ReadWavFile(filePath string) ([]int16, WAVHeader, error)`
 * A function for creating and writing to a `.wav` file: `WriteWavFile(filePath string, int16s []int16, header WAVHeader)`
 * A function for converting audio to an image (more or less, the conversion is a bit lossy, unfortunately): `CreateSpectrogramFromAudio(int16s []int16) (*image.RGBA, error)`
-* A function for removing the list interesting parts of the image, using the excellent [github.com/esimov/caire](https://github.com/esimov/caire) package: `CarveSeams(img *image.RGBA, newWidthInPercentage float64) (*image.RGBA, error)`
+* A function for removing the least interesting parts of the image, using the excellent [github.com/esimov/caire](https://github.com/esimov/caire) package: `CarveSeams(img *image.RGBA, newWidthInPercentage float64) (*image.RGBA, error)`
 * And finally, a function for converting the image back to audio: `CreateAudioFromSpectrogram(img *image.RGBA) ([]int16, error)`
 
 These functions are used by the utilities that are included in the `cmd` directory, which are:
