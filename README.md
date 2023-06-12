@@ -6,6 +6,10 @@
 
 What if audio could be converted to an image, and then seam carving could be used on the image, and then the image could be converted back to audio. Would it sound interesting? Would it be useful somehow as a sound design tool?
 
+### TL;DR
+
+It didn't quite work out.
+
 ### Process
 
 With some string, glue, experience with Go and some output from GPT4, I created the `wavecarve` package for Go. This package provides these functions:
@@ -54,5 +58,3 @@ Even though the audio is of low quality, one can get a hint of which effect seam
 * Seam carving does not produce a particularly interesting effect on the audio, using these types of spectrograms.
 * There might be other visual representations of audio that gives much better results, though.
 * It's not a great sound design tool, unless a lot of filters are applied afterwards, perhaps.
-
-Thanks for reading.
